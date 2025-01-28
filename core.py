@@ -1,4 +1,4 @@
-import pandas as pd
+import pandas as pd  # Ensure pandas is imported
 from cryptography.fernet import Fernet
 import os
 import logging
@@ -98,7 +98,7 @@ def dynamic_column_mapping_ui(data):
     """
     UI logic for dynamic column mapping using Streamlit.
     """
-    import streamlit as st
+    import streamlit as st  # Import Streamlit in the correct scope
     st.info("Mapping dataset columns. Please map your dataset columns to the expected format.")
     mapping = {}
     for expected, display_name in EXPECTED_COLUMNS.items():
