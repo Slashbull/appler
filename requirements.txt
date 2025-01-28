@@ -8,4 +8,5 @@ openpyxl  # For Excel file support
 fpdf2
 scikit-learn
 statsmodels
+bcrypt==4.0.1
 
