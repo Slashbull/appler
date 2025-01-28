@@ -1,59 +1,31 @@
 import streamlit as st
-import pandas as pd
-from core import preprocess_data, dynamic_column_mapping
-import market_overview
+from core import load_uploaded_file, dynamic_column_mapping_ui
 
 # Sidebar Navigation
 st.sidebar.title("Importer Dashboard")
 st.sidebar.markdown("📂 Upload your data file to explore insights.")
 uploaded_file = st.sidebar.file_uploader("Upload CSV or Excel File", type=["csv", "xlsx"])
 
-# Main Dashboard Logic
 def main():
-    """
-    Main entry point for the Importer Dashboard.
-    Handles file uploads, preprocessing, and module execution.
-    """
     st.title("📊 Importer Dashboard")
-    st.markdown(
-        """
-        Welcome to the **Importer Dashboard**! Analyze your import data using:
-        - Interactive visualizations
-        - Key metrics
-        - Trends over time
-        - AI-driven insights
-        """
-    )
-    
-    # Check if a file is uploaded
     if uploaded_file:
         try:
             # Load the uploaded file into a DataFrame
             if uploaded_file.name.endswith(".csv"):
-                raw_data = pd.read_csv(uploaded_file)  # Read CSV file
+                raw_data = pd.read_csv(uploaded_file)
             elif uploaded_file.name.endswith(".xlsx"):
-                raw_data = pd.read_excel(uploaded_file)  # Read Excel file
+                raw_data = pd.read_excel(uploaded_file)
             else:
                 st.error("Unsupported file format. Please upload a CSV or Excel file.")
                 st.stop()
 
-            # Step 1: Dynamic Column Mapping
-            st.info("📑 Mapping dataset columns...")
-            column_mapping = dynamic_column_mapping(raw_data)
-            if not column_mapping:
-                st.error("Column mapping is incomplete. Please map all required columns.")
-                st.stop()
+            # Get dynamic column mapping
+            mapping = dynamic_column_mapping_ui(raw_data)
 
-            # Rename columns based on the mapping
-            raw_data.rename(columns=column_mapping, inplace=True)
-
-            # Step 2: Preprocess the data
-            st.info("⚙️ Preprocessing data...")
-            data = preprocess_data(raw_data)
-
-            # Step 3: Run the Market Overview module
-            st.info("🚀 Running Market Overview module...")
-            market_overview.run(data)
+            # Preprocess data with mapping
+            data = load_uploaded_file(uploaded_file, mapping)
+            st.success("Data loaded and processed successfully!")
+            st.dataframe(data.head())  # Display the first few rows
 
         except Exception as e:
             st.error(f"❌ Error processing file: {e}")
@@ -61,6 +33,5 @@ def main():
     else:
         st.warning("📄 Please upload a data file to proceed.")
 
-# Entry point
 if __name__ == "__main__":
     main()
