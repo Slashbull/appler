@@ -1,0 +1,28 @@
+📦 Importer Dashboard Project
+│
+├── app.py                     # Main entry point for the dashboard
+├── core.py                    # Core functionalities: preprocessing, filtering, encryption, etc.
+├── requirements.txt           # Dependencies for the project
+├── structure.txt              # Explanation of the project structure
+├── states.json                # JSON file for state abbreviations mapping
+├── dashboard.log              # Log file for monitoring errors and events
+│
+├── submodules/                # Folder containing reusable submodules
+│   ├── __init__.py            # Empty file to treat the folder as a package
+│   ├── key_metrics.py         # Calculates KPIs (e.g., total imports, growth metrics)
+│   ├── trends_tools.py        # Monthly and yearly trend analysis tools
+│   ├── state_visuals.py       # Visualizations for state contributions (bar/heatmap)
+│   ├── contribution_tools.py  # Visualizations for importer/exporter contributions
+│   ├── anomaly_detection.py   # AI-powered anomaly detection for trends and data
+│   └── report_generator.py    # Generates exportable PDF/CSV reports
+│
+├── dashboards/                # Folder containing main dashboard modules
+│   ├── market_overview.py     # Market Overview Dashboard module
+│   ├── competitor_insights.py # Competitor Insights Dashboard module
+│   ├── trends_analysis.py     # Trends and Seasonal Analysis Dashboard module
+│   ├── state_insights.py      # State Insights Dashboard module
+│   └── exportable_reports.py  # Exportable Reports Dashboard module
+│
+└── static/                    # Folder for static assets (e.g., images, custom CSS, etc.)
+    ├── css/                   # Custom stylesheets for the dashboard
+    └── images/                # Static images (e.g., logos, icons)

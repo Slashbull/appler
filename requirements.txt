@@ -1,0 +1,11 @@
+streamlit
+pandas
+cryptography
+numpy
+plotly
+statsmodels
+openpyxl  # For Excel file support
+fpdf2
+scikit-learn
+statsmodels
+
