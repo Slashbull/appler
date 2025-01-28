@@ -35,30 +35,11 @@ EXPECTED_COLUMNS = {
     "State": "Consignee State"
 }
 
-def dynamic_column_mapping(data):
+def map_columns(data, mapping):
     """
-    Allow user to map columns dynamically if mismatched.
-    """
-    st.info("Mapping dataset columns. Please map your dataset columns to the expected format.")
-    mapping = {}
-    for expected, display_name in EXPECTED_COLUMNS.items():
-        st.text(f"Expected: {expected}")
-        user_column = st.selectbox(f"Select column for '{expected}'", options=["None"] + list(data.columns))
-        if user_column != "None":
-            mapping[user_column] = display_name
-    return mapping
-
-def preprocess_data(data):
-    """
-    Preprocess the data by standardizing columns, handling missing values, and generating derived fields.
+    Map dataset columns based on user-defined or expected mapping.
     """
     try:
-        # Map columns dynamically
-        st.info("Detecting column names...")
-        mapping = dynamic_column_mapping(data)
-        if not mapping:
-            raise ValueError("Column mapping failed. Please ensure all required columns are mapped.")
-        
         data.rename(columns=mapping, inplace=True)
 
         # Validate required columns
@@ -66,6 +47,16 @@ def preprocess_data(data):
         if missing_columns:
             raise ValueError(f"Missing required columns after mapping: {', '.join(missing_columns)}")
 
+        return data
+    except Exception as e:
+        logging.error(f"Error in mapping columns: {e}")
+        raise ValueError(f"Mapping error: {e}")
+
+def preprocess_data(data):
+    """
+    Preprocess the data by standardizing columns, handling missing values, and generating derived fields.
+    """
+    try:
         # Process 'Quantity' column
         if 'Quantity' in data.columns:
             data['Quantity'] = data['Quantity'].str.extract(r'(\d+)').astype(float)
@@ -81,9 +72,9 @@ def preprocess_data(data):
         logging.error(f"Error in preprocessing: {e}")
         raise ValueError(f"Preprocessing error: {e}")
 
-def load_uploaded_file(file):
+def load_uploaded_file(file, mapping):
     """
-    Load and preprocess data from an uploaded file (CSV or Excel).
+    Load and preprocess data from an uploaded file (CSV or Excel) with column mapping.
     """
     try:
         if file.name.endswith(".csv"):
@@ -92,7 +83,27 @@ def load_uploaded_file(file):
             data = pd.read_excel(file)
         else:
             raise ValueError("Unsupported file format. Please upload a CSV or Excel file.")
+
+        # Apply column mapping
+        data = map_columns(data, mapping)
+
+        # Preprocess data
         return preprocess_data(data)
+
     except Exception as e:
         logging.error(f"Error loading file: {e}")
         raise ValueError(f"Error loading file: {e}")
+
+def dynamic_column_mapping_ui(data):
+    """
+    UI logic for dynamic column mapping using Streamlit.
+    """
+    import streamlit as st
+    st.info("Mapping dataset columns. Please map your dataset columns to the expected format.")
+    mapping = {}
+    for expected, display_name in EXPECTED_COLUMNS.items():
+        st.text(f"Expected: {expected}")
+        user_column = st.selectbox(f"Select column for '{expected}'", options=["None"] + list(data.columns))
+        if user_column != "None":
+            mapping[user_column] = display_name
+    return mapping
