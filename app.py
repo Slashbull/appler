@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from core import preprocess_data
+from core import preprocess_data, dynamic_column_mapping
 import market_overview
 
 # Sidebar Navigation
@@ -37,10 +37,22 @@ def main():
                 st.error("Unsupported file format. Please upload a CSV or Excel file.")
                 st.stop()
 
-            # Preprocess the data
+            # Step 1: Dynamic Column Mapping
+            st.info("📑 Mapping dataset columns...")
+            column_mapping = dynamic_column_mapping(raw_data)
+            if not column_mapping:
+                st.error("Column mapping is incomplete. Please map all required columns.")
+                st.stop()
+
+            # Rename columns based on the mapping
+            raw_data.rename(columns=column_mapping, inplace=True)
+
+            # Step 2: Preprocess the data
+            st.info("⚙️ Preprocessing data...")
             data = preprocess_data(raw_data)
 
-            # Run the Market Overview module
+            # Step 3: Run the Market Overview module
+            st.info("🚀 Running Market Overview module...")
             market_overview.run(data)
 
         except Exception as e:
