@@ -12,15 +12,24 @@ from core import get_filtered_data
 
 def run(data):
     st.title("📊 Market Overview Dashboard")
-    st.markdown("Analyze your imports with insights into key metrics, trends, and contributions.")
+    st.markdown(
+        """
+        Analyze your import data with insights into:
+        - Key metrics
+        - Trends over time
+        - State-level contributions
+        - Importer/exporter performance
+        - AI-driven forecasting
+        """
+    )
 
     # Sidebar Filters
     st.sidebar.header("Filters")
-    state = st.sidebar.selectbox("State", options=["All"] + sorted(data['State'].unique().tolist()))
-    month = st.sidebar.selectbox("Month", options=["All"] + sorted(data['Month'].unique().tolist()))
-    year = st.sidebar.selectbox("Year", options=["All"] + sorted(data['Year'].unique().tolist()))
-    importer = st.sidebar.selectbox("Importer", options=["All"] + sorted(data['Consignee Name'].unique().tolist()))
-    exporter = st.sidebar.selectbox("Exporter", options=["All"] + sorted(data['Exporter Name'].unique().tolist()))
+    state = st.sidebar.selectbox("State", options=["All"] + sorted(data['State'].dropna().unique().tolist()))
+    month = st.sidebar.selectbox("Month", options=["All"] + sorted(data['Month'].dropna().unique().tolist()))
+    year = st.sidebar.selectbox("Year", options=["All"] + sorted(data['Year'].dropna().unique().tolist()))
+    importer = st.sidebar.selectbox("Importer", options=["All"] + sorted(data['Consignee Name'].dropna().unique().tolist()))
+    exporter = st.sidebar.selectbox("Exporter", options=["All"] + sorted(data['Exporter Name'].dropna().unique().tolist()))
 
     # Filter Data
     filtered_data = get_filtered_data(data, state=state, month=month, year=year, importer=importer, exporter=exporter)
